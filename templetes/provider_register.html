@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Service Provider - Roadside Assistance Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a192f;
+            --secondary: #112240;
+            --accent: #ff7e5f;
+            --accent-light: #feb47b;
+            --text: #e6f1ff;
+            --text-muted: #8892b0;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            color: #fff;
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: none;
+        }
+        
+        .card-body {
+            padding: 2.5rem;
+        }
+        
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 15px;
+            height: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent);
+            color: var(--text);
+            box-shadow: 0 0 0 0.25rem rgba(255, 126, 95, 0.25);
+        }
+        
+        .form-label {
+            color: var(--text);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            border: none;
+            border-radius: 30px;
+            padding: 12px 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 126, 95, 0.4);
+        }
+        
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        .form-text {
+            color: var(--text-muted) !important;
+            font-size: 0.85rem;
+        }
+        
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+        
+        .form-check {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-check:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+        }
+        
+        .form-check-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--border);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .form-check-label {
+            color: var(--text);
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: 2px solid var(--border);
+        }
+        
+        .step.active .step-number {
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            color: #fff;
+            border-color: transparent;
+        }
+        
+        .step-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        
+        .step.active .step-label {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .step-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+        
+        .step-progress {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(45deg, var(--accent), var(--accent-light));
+            transition: width 0.3s ease;
+            z-index: 1;
+        }
+        
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .btn-outline-light {
+            border-color: var(--border);
+            color: var(--text);
+            padding: 10px 25px;
+            border-radius: 30px;
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+        
+        .service-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .service-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .service-option input[type="checkbox"] {
+            margin-right: 1rem;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 126, 95, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--accent);
+            font-size: 1.25rem;
+        }
+        
+        .service-info h6 {
+            margin: 0;
+            color: var(--text);
+        }
+        
+        .service-info p {
+            margin: 0.25rem 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+            display: none;
+        }
+        
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload-btn {
+            border: 2px dashed var(--border);
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-btn:hover {
+            border-color: var(--accent);
+            background: rgba(255, 126, 95, 0.05);
+        }
+        
+        .file-upload input[type="file"] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .document-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px dashed var(--border);
+            display: none;
+        }
+        
+        .document-preview i {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .document-preview p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .document-preview small {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                margin: 1rem auto;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .step-label {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="h4 mb-0">Become a Service Provider</h2>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                
+                <!-- Form Sections -->
+                <form method="post" id="providerForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                               id="username" name="username" value="{{ form.username.value|default:'' }}" required>
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                               id="email" name="email" value="{{ form.email.value|default:'' }}" required>
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password1" class="form-label">Password</label>
+                        <input type="password" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                               id="password1" name="password1" required>
+                        {% if form.password1.errors %}
+                            <div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-text">At least 8 characters</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password2" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                               id="password2" name="password2" required>
+                        {% if form.password2.errors %}
+                            <div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="company_name" class="form-label">Company Name</label>
+                        <input type="text" class="form-control {% if form.company_name.errors %}is-invalid{% endif %}" 
+                               id="company_name" name="company_name" value="{{ form.company_name.value|default:'' }}" required>
+                        {% if form.company_name.errors %}
+                            <div class="invalid-feedback d-block">{{ form.company_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}" 
+                               id="phone_number" name="phone_number" value="{{ form.phone_number.value|default:'' }}" required>
+                        {% if form.phone_number.errors %}
+                            <div class="invalid-feedback d-block">{{ form.phone_number.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control {% if form.address.errors %}is-invalid{% endif %}" 
+                               id="address" name="address" rows="3" required>{{ form.address.value|default:'' }}</textarea>
+                        {% if form.address.errors %}
+                            <div class="invalid-feedback d-block">{{ form.address.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Services You Provide</label>
+                        <div class="form-text mb-2">Select all services you can offer</div>
+                        {% if form.service_categories.errors %}
+                            <div class="invalid-feedback d-block">{{ form.service_categories.errors.0 }}</div>
+                        {% endif %}
+                        <div class="row">
+                            {% for category in form.service_categories %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        {{ category.tag }}
+                                        <label class="form-check-label" for="{{ category.id_for_label }}">
+                                            {{ category.choice_label }}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i> Register as Provider
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Already have an account? <a href="{% url 'login' %}?type=provider" class="text-primary">Sign in</a></p>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'home' %}" class="text-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Home
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple password validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const password1 = document.getElementById('password1');
+            const password2 = document.getElementById('password2');
+            
+            if (password1 && password2) {
+                function validatePassword() {
+                    if (password1.value !== password2.value) {
+                        password2.setCustomValidity("Passwords don't match");
+                    } else {
+                        password2.setCustomValidity('');
+                    }
+                }
+                
+                password1.addEventListener('change', validatePassword);
+                password2.addEventListener('keyup', validatePassword);
+            }
+        });
+    </script>
+</body>
+</html>

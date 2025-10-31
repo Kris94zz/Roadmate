@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - RoadMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7e5f;
+            --secondary: #feb47b;
+            --dark-bg: #0a192f;
+            --card-bg: #112240;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --accent: #64ffda;
+            --border: rgba(100, 255, 218, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f 0%, #1a2f4f 100%);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(10, 25, 47, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--accent) !important;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent) !important;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 40px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .profile-header h1 {
+            color: white;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            margin: 0 auto 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, rgba(255, 126, 95, 0.1), rgba(100, 255, 218, 0.1));
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem;
+        }
+        
+        .card-header h5 {
+            color: var(--accent);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .form-label {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            color: var(--text-light);
+            box-shadow: 0 0 0 0.2rem rgba(100, 255, 218, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 126, 95, 0.4);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            background: transparent;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--accent);
+            color: var(--dark-bg);
+            transform: translateY(-2px);
+        }
+        
+        .info-item {
+            padding: 1rem;
+            background: rgba(100, 255, 218, 0.05);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .info-item .label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        
+        .info-item .value {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-road me-2"></i>RoadMate
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'my_bookings' %}">My Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'user_profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <div class="profile-header" style="margin-top: 70px;">
+        <div class="container text-center">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <h1 class="mb-2">{{ user.get_full_name|default:user.username }}</h1>
+            <p class="text-white-50">@{{ user.username }}</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <!-- Profile Information -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-circle me-2"></i>Profile Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <div class="label">Username</div>
+                            <div class="value">{{ user.username }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Email</div>
+                            <div class="value">{{ user.email }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Full Name</div>
+                            <div class="value">{{ user.get_full_name|default:"Not set" }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Member Since</div>
+                            <div class="value">{{ user.date_joined|date:"F d, Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Profile -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-edit me-2"></i>Edit Profile</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="{{ user.first_name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       value="{{ user.last_name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email }}" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                                <a href="{% url 'my_bookings' %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-list me-2"></i>View My Bookings
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

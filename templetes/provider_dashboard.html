@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Dashboard - RoadMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    :root {
+        --primary: #ff7e5f;
+        --secondary: #feb47b;
+        --dark-bg: #0a192f;
+        --card-bg: #112240;
+        --text-light: #e6f1ff;
+        --text-muted: #8892b0;
+        --accent: #64ffda;
+        --border: rgba(100, 255, 218, 0.1);
+    }
+    
+    body {
+        background: linear-gradient(135deg, #0a192f 0%, #1a2f4f 100%);
+        color: var(--text-light);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+    }
+    .dashboard-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        padding: 30px 0;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        border-bottom: 2px solid var(--accent);
+    }
+    
+    .dashboard-header h1 {
+        color: white;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dashboard-header .text-muted {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    .stat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--primary), var(--secondary));
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(255, 126, 95, 0.3);
+        border-color: var(--accent);
+    }
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .stat-card .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 600;
+    }
+    
+    .stat-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .stat-card i {
+        color: var(--accent);
+        opacity: 0.3;
+    }
+    .recent-bookings {
+        margin-top: 30px;
+    }
+    .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        color: var(--text-light);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, rgba(255, 126, 95, 0.1), rgba(100, 255, 218, 0.1));
+        border-bottom: 1px solid var(--border);
+        padding: 1.25rem;
+    }
+    
+    .card-header h6 {
+        color: var(--accent);
+        font-weight: 700;
+        margin: 0;
+        font-size: 1.1rem;
+    }
+    
+    .table {
+        color: var(--text-light);
+    }
+    
+    .table thead th {
+        border-bottom: 2px solid var(--border);
+        color: var(--accent);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+    }
+    
+    .table tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: all 0.2s ease;
+    }
+    
+    .table tbody tr:hover {
+        background: rgba(100, 255, 218, 0.05);
+    }
+    
+    .service-status {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background: linear-gradient(135deg, #f6c23e, #f4a261);
+        color: #000;
+        box-shadow: 0 2px 8px rgba(246, 194, 62, 0.3);
+    }
+    
+    .status-accepted {
+        background: linear-gradient(135deg, #1cc88a, #06d6a0);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(28, 200, 138, 0.3);
+    }
+    
+    .status-in_progress {
+        background: linear-gradient(135deg, #36b9cc, #4cc9f0);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(54, 185, 204, 0.3);
+    }
+    
+    .status-completed {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+    
+    .status-cancelled {
+        background: linear-gradient(135deg, #e74a3b, #dc3545);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(231, 74, 59, 0.3);
+    }
+    
+    .btn-action {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .btn-accept {
+        background: linear-gradient(135deg, #1cc88a, #06d6a0);
+        color: white;
+    }
+    
+    .btn-accept:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(28, 200, 138, 0.4);
+    }
+    
+    .btn-reject {
+        background: linear-gradient(135deg, #e74a3b, #dc3545);
+        color: white;
+    }
+    
+    .btn-reject:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(231, 74, 59, 0.4);
+    }
+    
+    .btn-complete {
+        background: linear-gradient(135deg, #36b9cc, #4cc9f0);
+        color: white;
+    }
+    
+    .btn-complete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(54, 185, 204, 0.4);
+    }
+    
+    .btn-outline-danger {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        background: transparent;
+    }
+    
+    .btn-outline-danger:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .badge {
+        padding: 0.5rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    
+    .bg-info {
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+    }
+    
+    .bg-light {
+        background: rgba(100, 255, 218, 0.05) !important;
+    }
+    
+    .text-primary {
+        color: var(--accent) !important;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: 1px solid var(--border);
+    }
+</style>
+    </head>
+<body>
+<div class="dashboard-header">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Provider Dashboard</h1>
+                <p class="text-muted mb-0">Welcome, {{ provider.company_name }}</p>
+            </div>
+            <div class="d-flex">
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Stats Cards -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="stat-label">Total Services</div>
+                            <div class="stat-value">{{ stats.total_services }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tools fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="stat-label">Active Bookings</div>
+                            <div class="stat-value">{{ stats.active_bookings }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="stat-label">Service Categories</div>
+                            <div class="stat-value">{{ stats.service_categories }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="stat-label">Pending Requests</div>
+                            <div class="stat-value">{{ stats.pending_requests }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bell fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Service Requests -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Service Requests</h6>
+        </div>
+        <div class="card-body">
+            {% if service_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Phone</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in service_requests %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ request.customer_name }}</strong><br>
+                                        <small class="text-muted">{{ request.customer.email }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ request.service_category.name }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="tel:{{ request.customer_phone }}" class="text-primary">
+                                            <i class="fas fa-phone me-1"></i>{{ request.customer_phone }}
+                                        </a>
+                                    </td>
+                                    <td class="small">{{ request.customer_location|truncatewords:8 }}</td>
+                                    <td>
+                                        <span class="service-status status-{{ request.status }}">
+                                            {{ request.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td class="small">{{ request.created_at|date:"M d, h:i A" }}</td>
+                                    <td>
+                                        {% if request.status == 'pending' %}
+                                            <form method="post" action="{% url 'update_service_request' request.id %}" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" name="action" value="accept" class="btn btn-action btn-accept btn-sm me-1" title="Accept Request">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="submit" name="action" value="reject" class="btn btn-action btn-reject btn-sm" title="Reject Request">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        {% elif request.status == 'accepted' %}
+                                            <form method="post" action="{% url 'update_service_request' request.id %}" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" name="action" value="complete" class="btn btn-action btn-complete btn-sm" title="Mark as Complete">
+                                                    <i class="fas fa-check-double"></i> Complete
+                                                </button>
+                                            </form>
+                                        {% elif request.status == 'completed' %}
+                                            <span class="text-success"><i class="fas fa-check-circle"></i> Done</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if request.description %}
+                                <tr>
+                                    <td colspan="7" class="bg-light">
+                                        <small><strong>Description:</strong> {{ request.description }}</small>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center py-4">No service requests yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Service Categories -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Your Service Categories</h6>
+        </div>
+        <div class="card-body">
+            {% if service_categories %}
+                <div class="row">
+                    {% for category in service_categories %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas {{ category.icon }} fa-3x text-primary mb-3"></i>
+                                    <h5>{{ category.name }}</h5>
+                                    <p class="text-muted small">{{ category.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted text-center">No service categories selected.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Recent Bookings -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Bookings</h6>
+        </div>
+        <div class="card-body">
+            {% if recent_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Service</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in recent_bookings %}
+                                <tr>
+                                    <td>#{{ booking.id }}</td>
+                                    <td>{{ booking.service.title }}</td>
+                                    <td>{{ booking.customer.username }}</td>
+                                    <td>{{ booking.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="service-status status-{{ booking.status }}">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center py-4">No bookings yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

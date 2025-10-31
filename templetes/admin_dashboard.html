@@ -1,0 +1,464 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --primary: #4a6cf7;
+    --primary-light: #eef1fe;
+    --secondary: #6c757d;
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --gray: #6c757d;
+    --light-gray: #f8f9fa;
+}
+
+body {
+    background-color: #f5f7fb;
+    color: #333;
+}
+
+/* Sidebar */
+.sidebar {
+    min-height: 100vh;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    position: fixed;
+    width: 250px;
+    z-index: 1000;
+}
+
+.sidebar-brand {
+    padding: 1.5rem 1.5rem 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+}
+
+.sidebar-menu {
+    padding: 0 1rem;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--secondary);
+    border-radius: 8px;
+    margin-bottom: 0.25rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.sidebar-menu i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px;
+    padding: 1.5rem;
+    min-height: 100vh;
+}
+
+/* Stats Cards */
+.stats-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary);
+}
+
+.stats-card .icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.stats-card.primary .icon { background: var(--primary); }
+.stats-card.success .icon { background: var(--success); }
+.stats-card.warning .icon { background: var(--warning); }
+.stats-card.danger .icon { background: var(--danger); }
+
+.stats-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.stats-card p {
+    color: var(--gray);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Tables */
+.card {
+    background: #fff;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: var(--gray);
+}
+
+/* Badges */
+.badge {
+    padding: 0.35em 0.65em;
+    font-weight: 500;
+    border-radius: 50rem;
+    font-size: 0.75em;
+}
+
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-confirmed { background: #c3e6cb; color: #155724; }
+.badge-in_progress { background: #b8daff; color: #004085; }
+.badge-completed { background: #d4edda; color: #155724; }
+.badge-cancelled { background: #f8d7da; color: #721c24; }
+
+/* Responsive */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .navbar-toggler {
+        display: block;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-tools me-2"></i>
+            Roadside Admin
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" class="active">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="#">
+                <i class="fas fa-calendar-alt"></i> Bookings
+            </a>
+            <a href="#">
+                <i class="fas fa-tools"></i> Services
+            </a>
+            <a href="#">
+                <i class="fas fa-users"></i> Providers
+            </a>
+            <a href="#">
+                <i class="fas fa-user"></i> Customers
+            </a>
+            <a href="#">
+                <i class="fas fa-star"></i> Reviews
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="{% url 'logout' %}">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content w-100">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">Dashboard Overview</h4>
+            <div class="d-flex align-items-center">
+                <span class="me-3">{{ current_date|date:"F j, Y" }}</span>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="stats-card primary">
+                    <div class="icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>{{ stats.today_bookings }}</h3>
+                    <p>Today's Bookings</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="stats-card success">
+                    <div class="icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>{{ stats.active_providers }}</h3>
+                    <p>Active Providers</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stats-card warning">
+                        <div class="icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>{{ stats.pending_bookings }}</h3>
+                        <p>Pending Bookings</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="stats-card danger">
+                        <div class="icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>{{ stats.recent_reviews }}</h3>
+                        <p>Recent Reviews</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Status -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Booking Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Pending</span>
+                            <span>{{ stats.booking_status.pending }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 style="width: {{ stats.booking_status.pending|default:0 }}%;" 
+                                 aria-valuenow="{{ stats.booking_status.pending }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>In Progress</span>
+                            <span>{{ stats.booking_status.in_progress }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                 style="width: {{ stats.booking_status.in_progress|default:0 }}%;" 
+                                 aria-valuenow="{{ stats.booking_status.in_progress }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Completed</span>
+                            <span>{{ stats.booking_status.completed }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {{ stats.booking_status.completed|default:0 }}%;" 
+                                 aria-valuenow="{{ stats.booking_status.completed }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Reviews -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Reviews</h5>
+                    <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    {% for review in stats.recent_reviews %}
+                    <div class="p-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>{{ review.booking.customer.get_full_name|default:review.booking.customer.username }}</strong>
+                                <div class="text-warning">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= review.rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                <span>{{ stats.booking_status.pending }}</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" 
+                                     style="width: {{ stats.booking_status.pending|default:0 }}%;" 
+                                     aria-valuenow="{{ stats.booking_status.pending }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>In Progress</span>
+                                <span>{{ stats.booking_status.in_progress }}</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-info" role="progressbar" 
+                                     style="width: {{ stats.booking_status.in_progress|default:0 }}%;" 
+                                     aria-valuenow="{{ stats.booking_status.in_progress }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Completed</span>
+                                <span>{{ stats.booking_status.completed }}</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: {{ stats.booking_status.completed|default:0 }}%;" 
+                                     aria-valuenow="{{ stats.booking_status.completed }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Reviews -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Recent Reviews</h5>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        {% for review in stats.recent_reviews %}
+                        <div class="p-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>{{ review.booking.customer.get_full_name|default:review.booking.customer.username }}</strong>
+                                    <div class="text-warning">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ review.created_at|timesince }} ago</small>
+                            </div>
+                            <p class="mb-0 text-muted">{{ review.comment|truncatewords:15 }}</p>
+                        </div>
+                        {% empty %}
+                        <div class="p-3 text-center text-muted">
+                            No reviews yet
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Toggle sidebar on mobile
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('show');
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(event) {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.querySelector('.navbar-toggler');
+    
+    if (window.innerWidth <= 992 && !sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+        sidebar.classList.remove('show');
+    }
+});
+
+// Auto-close sidebar when resizing to desktop
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 992) {
+        document.querySelector('.sidebar').classList.remove('show');
+    }
+});
+</script>
+{% endblock %}

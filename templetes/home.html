@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadside Assistance Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a192f;
+            color: #e6f1ff;
+        }
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 120px 0 0;
+            background: linear-gradient(135deg, #0a192f 0%, #0f2a4a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .module-card {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e6f1ff;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(26, 35, 126, 0.3);
+            border-color: #ff6d00;
+        }
+        .card-title {
+            color: #64ffda;
+            font-weight: 600;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #2962ff, #00b0ff);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #ff6d00, #ffab40);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 109, 0, 0.3);
+        }
+        .btn-secondary {
+            background: linear-gradient(45deg, #00b0ff, #00e5ff);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #ff6d00, #ffab40);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 109, 0, 0.3);
+        }
+        .fuel-results {
+            display: none;
+            margin-top: 30px;
+            background: rgba(10, 25, 47, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        .station-card {
+            background: rgba(0, 176, 255, 0.1);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .station-card:hover {
+            background: rgba(0, 176, 255, 0.2);
+            border-color: #ff6d00;
+        }
+        .navbar {
+            background: rgba(10, 25, 47, 0.9) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #64ffda !important;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: #e6f1ff !important;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #ff6d00 !important;
+        }
+        footer {
+            background: linear-gradient(135deg, #0a192f 0%, #1a237e 100%);
+            color: #e6f1ff;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #e6f1ff;
+            font-weight: 700;
+        }
+        p {
+            color: #8892b0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(10, 25, 47, 0.95); backdrop-filter: blur(10px); padding: 15px 0; border-bottom: 1px solid rgba(100, 255, 218, 0.1);">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}" style="font-weight: 700; color: #64ffda !important; font-size: 1.5rem;">
+                Roadmate
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Services
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <li><a class="dropdown-item" href="{% url 'towing_service' %}"><i class="fas fa-truck-pickup me-2"></i>Towing Service</a></li>
+                            <li><a class="dropdown-item" href="{% url 'battery_service' %}"><i class="fas fa-car-battery me-2"></i>Battery Jump Start</a></li>
+                            <li><a class="dropdown-item" href="{% url 'fuel_service' %}"><i class="fas fa-gas-pump me-2"></i>Fuel Delivery</a></li>
+                            <li><a class="dropdown-item" href="{% url 'tire_service' %}"><i class="fas fa-tire me-2"></i>Tire Change</a></li>
+                            <li><a class="dropdown-item" href="{% url 'lockout_service' %}"><i class="fas fa-key me-2"></i>Lockout Service</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#all-services"><i class="fas fa-list me-2"></i>View All Services</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                    <li class="nav-item ms-2 d-none d-lg-block">
+                        <a href="{% url 'provider_register' %}" class="btn btn-orange btn-sm mt-1">Become a Provider</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user and user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> {% if user.username %}{{ user.username }}{% else %}User{% endif %}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'user_profile' %}"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'my_bookings' %}"><i class="fas fa-calendar-check me-2"></i>My Bookings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% if user.is_staff or user.is_superuser %}
+                                    <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                {% elif user.service_provider %}
+                                    <li><a class="dropdown-item" href="{% url 'provider_dashboard' %}"><i class="fas fa-briefcase me-2"></i>Provider Dashboard</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                {% endif %}
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item" style="background: none; border: none; width: 100%; text-align: left;">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 pe-lg-5" data-aos="fade-right">
+                    <span class="badge bg-orange text-dark mb-4 px-4 py-2 fw-medium d-inline-flex align-items-center">
+                        <i class="fas fa-shield-alt me-2"></i>24/7 Emergency Service
+                    </span>
+                    
+                    <h1 class="display-4 fw-bold mb-4" style="color: #e6f1ff;">Professional Roadside Assistance <span class="text-orange">When You Need It</span></h1>
+                    <p class="lead mb-5" style="color: #a8b2d1;">Fast, reliable, and professional assistance for all your roadside emergencies. Our certified technicians are just a call away, ready to help 24/7.</p>
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <a href="#services" class="btn btn-orange btn-lg px-4 py-3 d-inline-flex align-items-center fw-medium">
+                            <i class="fas fa-tools me-2"></i>Our Services
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                        <a href="tel:+18005551234" class="btn btn-outline-light btn-lg px-4 py-3 d-inline-flex align-items-center fw-medium">
+                            <i class="fas fa-phone-alt me-2"></i>(800) 555-1234
+                        </a>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <div class="d-flex align-items-start p-3 rounded-3">
+                                    <div class="icon-box">
+                                        <i class="fas fa-bolt fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-1 text-white fw-medium">Fast Response</h5>
+                                        <p class="mb-0 text-white-50 small">Average response time under 30 minutes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <div class="d-flex align-items-start p-3 rounded-3">
+                                    <div class="icon-box">
+                                        <i class="fas fa-headset fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-1 text-white fw-medium">24/7 Support</h5>
+                                        <p class="mb-0 text-white-50 small">Always here when you need us</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 d-none d-lg-flex justify-content-center align-items-center" data-aos="fade-left">
+                    <div class="position-relative text-center">
+                        <div class="floating-badge">
+                            <span class="h3 fw-bold mb-0">24/7</span>
+                            <small class="fw-medium">Service</small>
+                            <div class="pulse"></div>
+                        </div>
+                        
+                        <div class="testimonial-card mt-5">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3">
+                                    <i class="fas fa-quote-left text-orange fa-2x"></i>
+                                </div>
+                                <div class="text-start">
+                                    <p class="mb-3">"Fastest response I've ever experienced. The mechanic was professional and had me back on the road in no time!"</p>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <i class="fas fa-user-circle fa-3x text-orange"></i>
+                                        </div>
+                                        <div class="text-start">
+                                            <h6 class="mb-0 fw-bold text-white">Sarah Johnson</h6>
+                                            <div class="rating text-warning">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="tel:+18005551234" class="floating-phone">
+                            <i class="fas fa-phone-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        /* Hero Section Styling */
+        .hero {
+            background: linear-gradient(135deg, #0a192f 0%, #0f2a4a 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 100px 0 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UHJvcGVydGllcz0ie30iIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==') repeat;
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: #e6f1ff;
+        }
+
+        .hero h1 .text-orange {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+
+        .hero p.lead {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            color: #a8b2d1 !important;
+            margin-bottom: 2.5rem;
+            max-width: 90%;
+            opacity: 0.9;
+        }
+
+        .btn-orange {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .btn-orange:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 126, 95, 0.4);
+            color: #fff;
+        }
+
+        .btn-outline-light {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item i {
+            width: 24px;
+            color: #64ffda;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .feature-item span {
+            color: #e6f1ff;
+            font-size: 0.95rem;
+        }
+
+        .floating-badge {
+            position: absolute;
+            top: -1.5rem;
+            right: 2rem;
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: #0a192f;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(255, 126, 95, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .floating-badge .pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 126, 95, 0.2);
+            border-radius: 12px;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 1rem;
+            left: 1.5rem;
+            font-size: 5rem;
+            font-family: Georgia, serif;
+            color: rgba(255, 255, 255, 0.05);
+            line-height: 1;
+            z-index: 0;
+        }
+
+        .testimonial-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: #e6f1ff;
+            position: relative;
+            padding-left: 1.5rem;
+            border-left: 3px solid #64ffda;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .testimonial-author img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            border: 2px solid #64ffda;
+        }
+
+        .author-info h6 {
+            margin: 0;
+            color: #64ffda;
+            font-weight: 600;
+        }
+
+        .author-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #a8b2d1;
+        }
+
+        .floating-phone {
+            position: absolute;
+            bottom: 2rem;
+            left: -1.5rem;
+            background: linear-gradient(45deg, #4a90e2, #5b9bed);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.4);
+            animation: pulse 2s infinite;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .floating-phone:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 15px 30px rgba(74, 144, 226, 0.6);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 126, 95, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 126, 95, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 126, 95, 0); }
+        }
+    </style>
+    
+    <!-- Wave divider -->
+    <div class="wave-divider">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+            <path fill="#0a192f" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,53.3C1120,53,1280,75,1360,85.3L1440,96L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+        </svg>
+    </div>
+        
+        <!-- Stats bar -->
+        <div class="position-absolute bottom-0 start-0 w-100">
+            <div class="container">
+                <div class="row g-0 bg-white rounded-top-4 shadow-sm">
+                    <div class="col-md-4 p-4 text-center border-end">
+                        <div class="display-5 fw-bold text-primary mb-1">10,000+</div>
+                        <div class="text-muted">Happy Customers</div>
+                    </div>
+                    <div class="col-md-4 p-4 text-center border-end">
+                        <div class="display-5 fw-bold text-warning mb-1">24/7</div>
+                        <div class="text-muted">Service Available</div>
+                    </div>
+                    <div class="col-md-4 p-4 text-center">
+                        <div class="display-5 fw-bold text-success mb-1">15 min</div>
+                        <div class="text-muted">Average Response Time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" style="background: linear-gradient(135deg, #0a192f 0%, #0f2a4a 100%);">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box" style="background: rgba(255, 126, 95, 0.1); color: #ff7e5f; width: 70px; height: 70px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                                <i class="fas fa-bolt fa-2x"></i>
+                            </div>
+                            <h4 class="text-white">Quick Response</h4>
+                            <p style="color: #a8b2d1;">Our team responds within minutes to get you back on the road as quickly as possible.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box" style="background: rgba(100, 255, 218, 0.1); color: #64ffda; width: 70px; height: 70px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                                <i class="fas fa-shield-alt fa-2x"></i>
+                            </div>
+                            <h4 class="text-white">Reliable Service</h4>
+                            <p style="color: #a8b2d1;">Certified professionals ensuring your vehicle gets the best care possible.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-box" style="background: rgba(255, 184, 0, 0.1); color: #ffb800; width: 70px; height: 70px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                                <i class="fas fa-map-marker-alt fa-2x"></i>
+                            </div>
+                            <h4 class="text-white">Nationwide Coverage</h4>
+                            <p style="color: #a8b2d1;">Wherever you are, we've got you covered with our extensive network.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Providers Section -->
+    <section class="py-5" id="providers" style="background: linear-gradient(135deg, #0a192f 0%, #0f2a4a 100%);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-white">Become a Service Provider</h2>
+                <p class="lead" style="color: #a8b2d1;">Join our network of trusted roadside assistance professionals</p>
+                <div class="divider mx-auto" style="background: linear-gradient(45deg, #ff7e5f, #feb47b); width: 80px; height: 4px; border-radius: 2px;"></div>
+            </div>
+            
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="pe-lg-5">
+                        <h3 class="h2 fw-bold mb-4 text-white">Grow Your Business With Us</h3>
+                        <p class="lead mb-4" style="color: #a8b2d1;">Join our platform to connect with customers in need of reliable roadside assistance services.</p>
+                        
+                        <div class="d-flex mb-4">
+                            <div class="me-4">
+                                <div class="icon-box" style="background: rgba(255, 126, 95, 0.1); color: #ff7e5f; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-chart-line fa-lg"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="h5 text-white">Increase Your Reach</h4>
+                                <p class="mb-0" style="color: #a8b2d1;">Access a steady stream of customers looking for reliable roadside assistance in your area.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex mb-4">
+                            <div class="me-4">
+                                <div class="icon-box" style="background: rgba(100, 255, 218, 0.1); color: #64ffda; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-clock fa-lg"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="h5 text-white">Flexible Schedule</h4>
+                                <p class="mb-0" style="color: #a8b2d1;">Choose when you want to work and accept jobs that fit your schedule.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex">
+                            <div class="me-4">
+                                <div class="icon-box" style="background: rgba(255, 184, 0, 0.1); color: #ffb800; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-shield-alt fa-lg"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="h5 text-white">Verified & Secure</h4>
+                                <p class="mb-0" style="color: #a8b2d1;">Get verified and build trust with customers through our secure platform.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-5">
+                            <a href="{% url 'provider_register' %}" class="btn btn-orange btn-lg px-4 me-3">Sign Up as Provider</a>
+                            <a href="#" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="border-0 p-4" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div class="ratio ratio-16x9 rounded-3 overflow-hidden mb-4">
+                            <img src="https://img.freepik.com/free-vector/roadside-assistance-service-concept-illustration_114360-1680.jpg" alt="Service Provider" class="img-fluid">
+                        </div>
+                        <div class="text-center">
+                            <h4 class="h5 fw-bold mb-3 text-white">How It Works</h4>
+                            <div class="d-flex justify-content-around">
+                                <div class="text-center px-2">
+                                    <div style="background: rgba(255, 126, 95, 0.1); color: #ff7e5f; width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
+                                        <span class="fw-bold">1</span>
+                                    </div>
+                                    <p class="small mb-0" style="color: #a8b2d1;">Sign Up</p>
+                                </div>
+                                <div class="text-center px-2">
+                                    <div style="background: rgba(100, 255, 218, 0.1); color: #64ffda; width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
+                                        <span class="fw-bold">2</span>
+                                    </div>
+                                    <p class="small mb-0" style="color: #a8b2d1;">Get Verified</p>
+                                </div>
+                                <div class="text-center px-2">
+                                    <div style="background: rgba(255, 184, 0, 0.1); color: #ffb800; width: 50px; height: 50px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
+                                        <span class="fw-bold">3</span>
+                                    </div>
+                                    <p class="small mb-0" style="color: #a8b2d1;">Start Earning</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Our Services</h2>
+                <p class="lead text-muted">Get immediate assistance with our reliable roadside services</p>
+                <div class="divider mx-auto bg-primary"></div>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Towing Service -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                <i class="fas fa-truck-pickup fa-2x"></i>
+                            </div>
+                            <h4 class="h5 mb-3">Towing Service</h4>
+                            <p class="text-muted mb-4">Broken down? We'll tow your vehicle to the nearest repair shop or your preferred location.</p>
+                            <div class="d-grid">
+                                <a href="{% url 'towing_service' %}" class="btn btn-primary">
+                                    <i class="fas fa-truck-pickup me-2"></i>Request Tow
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mechanic Service -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-box bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                <i class="fas fa-tools fa-2x"></i>
+                            </div>
+                            <h4 class="h5 mb-3">Mechanic Service</h4>
+                            <p class="text-muted mb-4">Need repairs on the spot? Our certified mechanics can help with most common issues.</p>
+                            <div class="d-grid">
+                                <a href="{% url 'mechanic_service' %}" class="btn btn-danger">
+                                    <i class="fas fa-tools me-2"></i>Request Mechanic
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fuel Delivery -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-box bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                <i class="fas fa-gas-pump fa-2x"></i>
+                            </div>
+                            <h4 class="h5 mb-3">Fuel Delivery</h4>
+                            <p class="text-muted mb-4">Ran out of gas? We'll deliver fuel to your location so you can get back on the road.</p>
+                            <div class="d-grid">
+                                <a href="{% url 'fuel_service' %}" class="btn btn-warning">
+                                    <i class="fas fa-gas-pump me-2"></i>Request Fuel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Battery Jump Start -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-box bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                <i class="fas fa-car-battery fa-2x"></i>
+                            </div>
+                            <h4 class="h5 mb-3">Battery Jump Start</h4>
+                            <p class="text-muted mb-4">Dead battery? We'll come to you and jump-start your vehicle to get you moving again.</p>
+                            <div class="d-grid">
+                                <a href="{% url 'battery_service' %}" class="btn btn-info">
+                                    <i class="fas fa-car-battery me-2"></i>Request Jump Start
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tire Change -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                            <div class="card-body p-4 text-center">
+                                <div class="icon-box bg-purple bg-opacity-10 text-purple rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px; --bs-purple: #6f42c1;">
+                                    <i class="fas fa-tire fa-2x"></i>
+                                </div>
+                                <h4 class="h5 mb-3">Tire Change</h4>
+                                <p class="text-muted mb-4">Flat tire? Our experts will come to you and replace it with your spare tire quickly.</p>
+                                <div class="d-grid">
+                                    <a href="{% url 'tire_service' %}" class="btn" style="background-color: #6f42c1; color: white;">
+                                        <i class="fas fa-tools me-2"></i>Request Tire Service
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Lockout Service -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
+                        <div class="card-body p-4 text-center">
+                            <div class="icon-box bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                                <i class="fas fa-key fa-2x"></i>
+                            </div>
+                            <h4 class="h5 mb-3">Lockout Service</h4>
+                            <p class="text-muted mb-4">Locked out of your car? Our professionals will help you get back in quickly and safely.</p>
+                            <div class="d-grid">
+                                <a href="{% url 'lockout_service' %}" class="btn btn-danger">
+                                    <i class="fas fa-unlock me-2"></i>Unlock My Car
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fuel Results Section -->
+            <div id="fuelResults" class="fuel-results">
+                <h4>Nearest Petrol Stations</h4>
+                <div id="stationsList"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-5" style="background: linear-gradient(135deg, #0a192f 0%, #1a2f4f 100%);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="about-image">
+                        <div class="position-relative">
+                            <div class="icon-box-large bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 120px; height: 120px; background: linear-gradient(135deg, #ff7e5f, #feb47b);">
+                                <i class="fas fa-road fa-4x text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="about-content text-white">
+                        <h2 class="display-5 fw-bold mb-4" style="color: #64ffda;">About RoadMate</h2>
+                        <p class="lead mb-4" style="color: #e6f1ff;">
+                            Your trusted partner for 24/7 roadside assistance and emergency services.
+                        </p>
+                        <p class="mb-4" style="color: #8892b0;">
+                            At RoadMate, we understand that vehicle breakdowns and emergencies can happen at any time. 
+                            That's why we've built a comprehensive platform connecting you with verified service providers 
+                            who are ready to help whenever you need them.
+                        </p>
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="feature-box p-3 rounded" style="background: rgba(100, 255, 218, 0.1); border-left: 4px solid #64ffda;">
+                                    <h5 class="mb-2" style="color: #64ffda;">
+                                        <i class="fas fa-clock me-2"></i>24/7 Availability
+                                    </h5>
+                                    <p class="mb-0 small" style="color: #8892b0;">
+                                        Round-the-clock service to assist you anytime, anywhere.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-box p-3 rounded" style="background: rgba(255, 126, 95, 0.1); border-left: 4px solid #ff7e5f;">
+                                    <h5 class="mb-2" style="color: #feb47b;">
+                                        <i class="fas fa-shield-alt me-2"></i>Verified Providers
+                                    </h5>
+                                    <p class="mb-0 small" style="color: #8892b0;">
+                                        All service providers are thoroughly vetted and approved.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-box p-3 rounded" style="background: rgba(100, 255, 218, 0.1); border-left: 4px solid #64ffda;">
+                                    <h5 class="mb-2" style="color: #64ffda;">
+                                        <i class="fas fa-bolt me-2"></i>Quick Response
+                                    </h5>
+                                    <p class="mb-0 small" style="color: #8892b0;">
+                                        Fast response times to get you back on the road quickly.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-box p-3 rounded" style="background: rgba(255, 126, 95, 0.1); border-left: 4px solid #ff7e5f;">
+                                    <h5 class="mb-2" style="color: #feb47b;">
+                                        <i class="fas fa-map-marked-alt me-2"></i>Wide Coverage
+                                    </h5>
+                                    <p class="mb-0 small" style="color: #8892b0;">
+                                        Extensive network of providers across multiple locations.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#services" class="btn btn-lg px-4 py-3" style="background: linear-gradient(135deg, #ff7e5f, #feb47b); border: none; color: white; font-weight: 600;">
+                                <i class="fas fa-tools me-2"></i>Explore Services
+                            </a>
+                            <a href="{% url 'provider_register' %}" class="btn btn-outline-light btn-lg px-4 py-3" style="border: 2px solid #64ffda; color: #64ffda; font-weight: 600;">
+                                <i class="fas fa-user-plus me-2"></i>Become a Provider
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="row g-4 mt-5 text-center">
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4 rounded" style="background: rgba(100, 255, 218, 0.1);">
+                        <h2 class="display-4 fw-bold mb-2" style="color: #64ffda;">500+</h2>
+                        <p class="mb-0" style="color: #8892b0;">Service Providers</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4 rounded" style="background: rgba(255, 126, 95, 0.1);">
+                        <h2 class="display-4 fw-bold mb-2" style="color: #ff7e5f;">10K+</h2>
+                        <p class="mb-0" style="color: #8892b0;">Happy Customers</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4 rounded" style="background: rgba(100, 255, 218, 0.1);">
+                        <h2 class="display-4 fw-bold mb-2" style="color: #64ffda;">24/7</h2>
+                        <p class="mb-0" style="color: #8892b0;">Support Available</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4 rounded" style="background: rgba(255, 126, 95, 0.1);">
+                        <h2 class="display-4 fw-bold mb-2" style="color: #ff7e5f;">15min</h2>
+                        <p class="mb-0" style="color: #8892b0;">Avg. Response Time</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-4" style="background: #0a192f; color: #8892b0; border-top: 1px solid rgba(100, 255, 218, 0.1);">
+        <div class="container">
+            <p class="mb-2">&copy; 2024 RoadMate - Roadside Assistance Hub. All rights reserved.</p>
+            <p class="mb-0 small">
+                <a href="#" class="text-decoration-none me-3" style="color: #64ffda;">Privacy Policy</a>
+                <a href="#" class="text-decoration-none me-3" style="color: #64ffda;">Terms of Service</a>
+                <a href="#contact" class="text-decoration-none" style="color: #64ffda;">Contact Us</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+{% block extra_js %}
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS animation
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+        });
+    </script>
+{% endblock %}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add smooth scrolling to all links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    <style>
+        /* Navbar specific styles */
+        .navbar {
+            transition: all 0.3s ease;
+            padding: 15px 0;
+        }
+        .navbar.scrolled {
+            background: rgba(10, 25, 47, 0.98) !important;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+        .nav-link {
+            position: relative;
+            margin: 0 8px;
+            padding: 8px 12px !important;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .nav-link:not(.dropdown-item):after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: #ff6d00;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover:not(.dropdown-item):after {
+            width: 70%;
+        }
+        .dropdown-menu {
+            background: rgba(10, 25, 47, 0.98);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .dropdown-item {
+            color: #e6f1ff;
+            padding: 8px 20px;
+            transition: all 0.2s ease;
+        }
+        .dropdown-item:hover {
+            background: rgba(100, 255, 218, 0.1);
+            color: #ff6d00;
+            padding-left: 25px;
+        }
+        .dropdown-divider {
+            border-color: rgba(100, 255, 218, 0.1);
+        }
+    </style>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+    <!-- Custom JS -->
+    <script>
+        // Mock data for petrol stations (in a real app, fetch from backend)
+        const stations = [
+            { name: "Station A", lat: 40.7128, lng: -74.0060, distance: 0 }, // Mock distances
+            { name: "Station B", lat: 40.7589, lng: -73.9851, distance: 0 },
+            { name: "Station C", lat: 40.7505, lng: -73.9934, distance: 0 }
+        ];
+
+        // Mock user location (in real app, use navigator.geolocation)
+        const userLat = 40.7128; // Example: New York City
+        const userLng = -74.0060;
+
+        // Calculate mock distances (simple Euclidean for demo)
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const dLat = lat2 - lat1;
+            const dLng = lng2 - lng1;
+            return Math.sqrt(dLat * dLat + dLng * dLng) * 111; // Rough km conversion
+        }
+
+        // Update distances and sort
+        stations.forEach(station => {
+            station.distance = calculateDistance(userLat, userLng, station.lat, station.lng);
+        });
+        stations.sort((a, b) => a.distance - b.distance);
+
+        // Handle Fuel Button Click
+        document.getElementById('fuelBtn').addEventListener('click', function() {
+            // Simulate geolocation prompt
+            if (confirm("Allow location access to find nearest stations?")) {
+                const resultsDiv = document.getElementById('fuelResults');
+                const listDiv = document.getElementById('stationsList');
+                listDiv.innerHTML = ''; // Clear previous results
+
+                stations.forEach(station => {
+                    const stationDiv = document.createElement('div');
+                    stationDiv.className = 'station-card';
+                    stationDiv.innerHTML = `
+                        <h6>${station.name}</h6>
+                        <p>Distance: ${station.distance.toFixed(2)} km</p>
+                        <button class="btn btn-sm btn-success">Contact</button>
+                    `;
+                    listDiv.appendChild(stationDiv);
+                });
+
+                resultsDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body> 
+</html>

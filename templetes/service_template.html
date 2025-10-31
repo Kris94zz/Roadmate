@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ service_name }} - Roadside Assistance</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a192f;
+            color: #e6f1ff;
+            padding-top: 70px;
+        }
+        .navbar {
+            background: rgba(10, 25, 47, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #64ffda !important;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: #e6f1ff !important;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #64ffda !important;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+            background: #112240;
+            color: #e6f1ff;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background-color: #64ffda;
+            border: none;
+            color: #0a192f;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #52d1b0;
+            color: #0a192f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
+        }
+        .icon-box {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            background-color: rgba(100, 255, 218, 0.1);
+            color: #64ffda;
+            font-size: 2.5rem;
+        }
+        .service-header {
+            background: linear-gradient(135deg, #112240 0%, #0a192f 100%);
+            padding: 80px 0;
+            margin-bottom: 50px;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        .form-control, .form-select {
+            background-color: #112240;
+            border: 1px solid #233554;
+            color: #e6f1ff;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #0a192f;
+            border-color: #64ffda;
+            color: #e6f1ff;
+            box-shadow: 0 0 0 0.25rem rgba(100, 255, 218, 0.1);
+        }
+        .text-muted {
+            color: #8892b0 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Roadmate</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'fuel_service' %}">Services</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user and user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-car me-2"></i>My Bookings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Service Header -->
+    <header class="service-header text-center">
+        <div class="container">
+            <div class="icon-box">
+                <i class="fas fa-{{ service_icon }}"></i>
+            </div>
+            <h1 class="display-4 mb-3">{{ service_name }}</h1>
+            <p class="lead text-muted">{{ service_description }}</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="h3 mb-3">Available {{ service_name }} Providers</h2>
+            <p class="text-muted">{{ providers_count }} provider{% if providers_count != 1 %}s{% endif %} available</p>
+        </div>
+        
+        <div class="row g-4">
+            {% if providers %}
+                {% for provider in providers %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="text-center mb-3">
+                                <div class="position-relative d-inline-block">
+                                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                                        <i class="fas fa-user fa-3x text-white"></i>
+                                    </div>
+                                    <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-2" style="border: 3px solid #0a192f;">
+                                        <span class="visually-hidden">Available</span>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <h4 class="h5 mb-1 text-center">{{ provider.company_name }}</h4>
+                            <p class="text-muted small text-center mb-3">
+                                <i class="fas fa-user me-1"></i>{{ provider.user.username }}
+                            </p>
+                            
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Contact</div>
+                                <div><i class="fas fa-phone text-primary me-2"></i>{{ provider.phone_number }}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Email</div>
+                                <div class="text-truncate"><i class="fas fa-envelope text-primary me-2"></i>{{ provider.user.email }}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Address</div>
+                                <div class="small"><i class="fas fa-map-marker-alt text-danger me-2"></i>{{ provider.address|truncatewords:10 }}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Services Offered</div>
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for cat in provider.service_categories.all %}
+                                        <span class="badge bg-primary">{{ cat.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 mt-3">
+                                {% if user.is_authenticated %}
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#requestModal{{ provider.id }}">
+                                        <i class="fas fa-paper-plane me-2"></i>Request Service
+                                    </button>
+                                    <a href="tel:{{ provider.phone_number }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-phone-alt me-2"></i>{{ provider.phone_number }}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'login' %}" class="btn btn-primary">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Login to Request
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service Request Modal for this provider -->
+                <div class="modal fade" id="requestModal{{ provider.id }}" tabindex="-1" aria-labelledby="requestModalLabel{{ provider.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="background: #112240; border: 1px solid rgba(100, 255, 218, 0.1);">
+                            <div class="modal-header border-bottom border-secondary">
+                                <h5 class="modal-title" id="requestModalLabel{{ provider.id }}">Request Service from {{ provider.company_name }}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="post" action="{% url 'create_service_request' provider.id category.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="service_slug" value="{{ request.path|slice:'10:' }}">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="customer_name{{ provider.id }}" class="form-label">Your Name</label>
+                                        <input type="text" class="form-control" id="customer_name{{ provider.id }}" name="customer_name" 
+                                               value="{{ user.get_full_name|default:user.username }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="customer_phone{{ provider.id }}" class="form-label">Your Phone Number</label>
+                                        <input type="tel" class="form-control" id="customer_phone{{ provider.id }}" name="customer_phone" 
+                                               placeholder="+1 (555) 123-4567" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="customer_location{{ provider.id }}" class="form-label">Your Location</label>
+                                        <textarea class="form-control" id="customer_location{{ provider.id }}" name="customer_location" 
+                                                  rows="2" placeholder="Enter your current location or address" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description{{ provider.id }}" class="form-label">Problem Description (Optional)</label>
+                                        <textarea class="form-control" id="description{{ provider.id }}" name="description" 
+                                                  rows="3" placeholder="Describe your issue..."></textarea>
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>{{ provider.company_name }}</strong> will receive your contact details and location. 
+                                        They will contact you at <strong>{{ provider.phone_number }}</strong> shortly.
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-top border-secondary">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Send Request
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-5 text-center">
+                            <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                            <h4>No Providers Available</h4>
+                            <p class="text-muted">There are currently no approved providers offering {{ service_name }} service.</p>
+                            <p class="text-muted">Please check back later or try another service.</p>
+                            <a href="{% url 'home' %}" class="btn btn-primary mt-3">
+                                <i class="fas fa-home me-2"></i>Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Map View Toggle -->
+        <div class="text-center mt-5">
+            <button class="btn btn-outline-primary">
+                <i class="fas fa-map-marked-alt me-2"></i>View on Map
+            </button>
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Request Service Modal -->
+    <div class="modal fade" id="requestModal" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="requestModalLabel">Request Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="serviceRequestForm">
+                        <input type="hidden" id="providerName">
+                        <div class="mb-3">
+                            <label for="serviceType" class="form-label">Service Type</label>
+                            <input type="text" class="form-control bg-transparent text-white" id="serviceType" value="{{ service_name }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Your Location</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" class="form-control bg-transparent text-white" id="location" placeholder="Enter your location" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleInfo" class="form-label">Vehicle Information</label>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control bg-transparent text-white" placeholder="Make" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control bg-transparent text-white" placeholder="Model" required>
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <input type="text" class="form-control bg-transparent text-white" placeholder="Year" required>
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <input type="text" class="form-control bg-transparent text-white" placeholder="License Plate">
+                                </div>
+                            </div>
+                        </div>
+                        {% if service_name == 'Towing Service' %}
+                        <div class="mb-3">
+                            <label for="destination" class="form-label">Destination</label>
+                            <input type="text" class="form-control bg-transparent text-white" id="destination" placeholder="Where do you need to be towed to?" required>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control bg-transparent text-white" id="phone" placeholder="Your contact number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control bg-transparent text-white" id="notes" rows="2" placeholder="Any special instructions?"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Send Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Request Handling -->
+    <script>
+        function requestService(providerName) {
+            // Set the provider name in the modal
+            document.getElementById('providerName').value = providerName;
+            // Update modal title
+            document.getElementById('requestModalLabel').textContent = `Request ${providerName}'s Service`;
+            // Show the modal
+            const requestModal = new bootstrap.Modal(document.getElementById('requestModal'));
+            requestModal.show();
+        }
+
+        // Handle form submission
+        document.getElementById('serviceRequestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Sending...';
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Get form data
+                const formData = new FormData(this);
+                const requestData = {
+                    service: document.getElementById('serviceType').value,
+                    provider: document.getElementById('providerName').value,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Add form data to request
+                for (let [key, value] of formData.entries()) {
+                    requestData[key] = value;
+                }
+                
+                // Log the request (in production, send to backend)
+                console.log('Service request submitted:', requestData);
+                
+                // Show success message
+                const phone = document.getElementById('phone').value || 'your phone';
+                alert(`Your service request has been received!\n\nWe've sent a confirmation to ${phone}.\n${requestData.provider} will contact you shortly.`);
+                
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
+                modal.hide();
+                
+                // Reset form and button
+                this.reset();
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                
+            }, 1500);
+        });
+        
+        // Handle view on map button
+        document.querySelector('.btn-outline-primary')?.addEventListener('click', function() {
+            alert('Map view would open here in a full implementation.');
+            // In a real app, this would show a map with provider locations
+        });
+    </script>
+</body>
+</html>

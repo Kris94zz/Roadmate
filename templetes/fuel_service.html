@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel Service Providers - Roadside Assistance</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding-top: 70px;
+        }
+        .navbar {
+            background: rgba(10, 25, 47, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #64ffda !important;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: #e6f1ff !important;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #ff6d00 !important;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+            color: #000;
+            font-weight: 600;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            color: #000;
+        }
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Roadmate</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'fuel_service' %}">Fuel Service</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user and user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-car me-2"></i>My Bookings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5" style="margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0">Fuel Service Providers</h2>
+                        <a href="{% url 'home' %}" class="btn btn-sm btn-light">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Search and Filter Bar -->
+                    <div class="p-4 border-bottom">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                                    <input type="text" class="form-control" placeholder="Search fuel stations..." id="searchInput">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="filterSelect">
+                                    <option value="all">All Providers</option>
+                                    <option value="available">Available Now</option>
+                                    <option value="nearest">Nearest First</option>
+                                    <option value="rating">Top Rated</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fuel Stations List -->
+                    <div class="list-group list-group-flush" id="fuelStationsList">
+                        <!-- Sample Fuel Station 1 -->
+                        <div class="list-group-item list-group-item-action p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex">
+                                    <img src="https://via.placeholder.com/80" class="rounded me-4" alt="Fuel Station" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <div>
+                                        <h5 class="mb-1">City Fuel Station</h5>
+                                        <div class="mb-2">
+                                            <span class="badge bg-success">Open Now</span>
+                                            <span class="badge bg-info text-dark ms-1">24/7</span>
+                                        </div>
+                                        <p class="text-muted mb-1">
+                                            <i class="fas fa-map-marker-alt text-danger me-1"></i> 123 Main St, Downtown
+                                        </p>
+                                        <div class="text-warning mb-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                            <span class="text-muted ms-1">(128 reviews)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="h5 mb-3">$3.49<small class="text-muted">/gallon</small></div>
+                                    <a href="#" class="btn btn-primary">
+                                        <i class="fas fa-gas-pump me-1"></i> Request Fuel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample Fuel Station 2 -->
+                        <div class="list-group-item list-group-item-action p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex">
+                                    <img src="https://via.placeholder.com/80" class="rounded me-4" alt="Fuel Station" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <div>
+                                        <h5 class="mb-1">Express Fuel & Go</h5>
+                                        <div class="mb-2">
+                                            <span class="badge bg-success">Open Now</span>
+                                        </div>
+                                        <p class="text-muted mb-1">
+                                            <i class="fas fa-map-marker-alt text-danger me-1"></i> 456 Oak Ave, Midtown
+                                        </p>
+                                        <div class="text-warning mb-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                            <i class="far fa-star"></i>
+                                            <span class="text-muted ms-1">(87 reviews)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="h5 mb-3">$3.59<small class="text-muted">/gallon</small></div>
+                                    <a href="#" class="btn btn-primary">
+                                        <i class="fas fa-gas-pump me-1"></i> Request Fuel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sample Fuel Station 3 -->
+                        <div class="list-group-item list-group-item-action p-4">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex">
+                                    <img src="https://via.placeholder.com/80" class="rounded me-4" alt="Fuel Station" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <div>
+                                        <h5 class="mb-1">Quick Stop Fuel</h5>
+                                        <div class="mb-2">
+                                            <span class="badge bg-danger">Closes at 11 PM</span>
+                                        </div>
+                                        <p class="text-muted mb-1">
+                                            <i class="fas fa-map-marker-alt text-danger me-1"></i> 789 Pine St, Uptown
+                                        </p>
+                                        <div class="text-warning mb-2">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <span class="text-muted ms-1">(215 reviews)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="h5 mb-3">$3.39<small class="text-muted">/gallon</small></div>
+                                    <a href="#" class="btn btn-primary">
+                                        <i class="fas fa-gas-pump me-1"></i> Request Fuel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="card-footer bg-white">
+                    <nav aria-label="Fuel stations navigation">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Map Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="locationModalLabel">Select Your Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="map" style="height: 400px; width: 100%;"></div>
+                <div class="mt-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search location or drop pin on map">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmLocation">Confirm Location</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const stations = document.querySelectorAll('#fuelStationsList .list-group-item');
+        
+        stations.forEach(station => {
+            const stationName = station.querySelector('h5').textContent.toLowerCase();
+            const stationAddress = station.querySelector('.text-muted').textContent.toLowerCase();
+            
+            if (stationName.includes(searchTerm) || stationAddress.includes(searchTerm)) {
+                station.style.display = '';
+            } else {
+                station.style.display = 'none';
+            }
+        });
+    });
+
+    // Filter functionality
+    document.getElementById('filterSelect').addEventListener('change', function() {
+        // In a real app, this would filter the stations based on the selected option
+        console.log('Filter by:', this.value);
+    });
+
+    // Initialize map when location modal is shown
+    document.getElementById('locationModal').addEventListener('shown.bs.modal', function() {
+        // In a real app, this would initialize a map
+        console.log('Initialize map here');
+    });
+
+    // Confirm location button click
+    document.getElementById('confirmLocation').addEventListener('click', function() {
+        // In a real app, this would confirm the selected location
+        const modal = bootstrap.Modal.getInstance(document.getElementById('locationModal'));
+        modal.hide();
+        // Show success message
+        alert('Location confirmed! Finding nearest fuel providers...');
+    });
+</script>
+{% endblock %}

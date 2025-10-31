@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - RoadMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7e5f;
+            --secondary: #feb47b;
+            --dark-bg: #0a192f;
+            --card-bg: #112240;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --accent: #64ffda;
+            --border: rgba(100, 255, 218, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f 0%, #1a2f4f 100%);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(10, 25, 47, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--accent) !important;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent) !important;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 40px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .page-header h1 {
+            color: white;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(255, 126, 95, 0.3);
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-card .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            color: var(--text-light);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, rgba(255, 126, 95, 0.1), rgba(100, 255, 218, 0.1));
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+        }
+        
+        .booking-card {
+            border-left: 4px solid var(--accent);
+        }
+        
+        .booking-card.pending {
+            border-left-color: #f6c23e;
+        }
+        
+        .booking-card.accepted {
+            border-left-color: #1cc88a;
+        }
+        
+        .booking-card.completed {
+            border-left-color: #28a745;
+        }
+        
+        .booking-card.cancelled {
+            border-left-color: #e74a3b;
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, #f6c23e, #f4a261);
+            color: #000;
+            box-shadow: 0 2px 8px rgba(246, 194, 62, 0.3);
+        }
+        
+        .status-accepted {
+            background: linear-gradient(135deg, #1cc88a, #06d6a0);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(28, 200, 138, 0.3);
+        }
+        
+        .status-in_progress {
+            background: linear-gradient(135deg, #36b9cc, #4cc9f0);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(54, 185, 204, 0.3);
+        }
+        
+        .status-completed {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-cancelled {
+            background: linear-gradient(135deg, #e74a3b, #dc3545);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(231, 74, 59, 0.3);
+        }
+        
+        .booking-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .booking-info i {
+            color: var(--accent);
+            width: 20px;
+            margin-right: 10px;
+        }
+        
+        .provider-name {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-bottom-color: var(--accent);
+            color: var(--text-light);
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: transparent;
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--accent);
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-road me-2"></i>RoadMate
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'my_bookings' %}">My Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header" style="margin-top: 70px;">
+        <div class="container">
+            <h1><i class="fas fa-calendar-check me-3"></i>My Bookings</h1>
+            <p class="text-white-50 mb-0">Track and manage your service requests</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <div class="stat-value">{{ total_bookings }}</div>
+                    <div class="stat-label">Total Bookings</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <div class="stat-value">{{ pending_bookings.count }}</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <div class="stat-value">{{ active_bookings.count }}</div>
+                    <div class="stat-label">Active</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <div class="stat-value">{{ completed_bookings.count }}</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button">
+                    All Bookings
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button">
+                    Pending <span class="badge bg-warning text-dark ms-1">{{ pending_bookings.count }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button">
+                    Active <span class="badge bg-success ms-1">{{ active_bookings.count }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button">
+                    Completed
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="bookingTabsContent">
+            <!-- All Bookings -->
+            <div class="tab-pane fade show active" id="all" role="tabpanel">
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <div class="card booking-card {{ booking.status }}">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="provider-name mb-2">
+                                        <i class="fas fa-building me-2"></i>{{ booking.provider.company_name }}
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-tools"></i>
+                                        <span>{{ booking.service_category.name }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>{{ booking.created_at|date:"F d, Y - h:i A" }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ booking.customer_location|truncatewords:15 }}</span>
+                                    </div>
+                                    {% if booking.description %}
+                                    <div class="booking-info">
+                                        <i class="fas fa-comment"></i>
+                                        <span>{{ booking.description|truncatewords:20 }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="mb-3">
+                                        <span class="status-badge status-{{ booking.status }}">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <a href="tel:{{ booking.provider.phone_number }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-phone me-1"></i>Call Provider
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h4>No Bookings Yet</h4>
+                        <p>You haven't made any service requests yet.</p>
+                        <a href="{% url 'home' %}" class="btn btn-primary mt-3">
+                            <i class="fas fa-search me-2"></i>Find Services
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Pending Bookings -->
+            <div class="tab-pane fade" id="pending" role="tabpanel">
+                {% if pending_bookings %}
+                    {% for booking in pending_bookings %}
+                    <div class="card booking-card pending">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="provider-name mb-2">
+                                        <i class="fas fa-building me-2"></i>{{ booking.provider.company_name }}
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-tools"></i>
+                                        <span>{{ booking.service_category.name }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>{{ booking.created_at|date:"F d, Y - h:i A" }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ booking.customer_location|truncatewords:15 }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="mb-3">
+                                        <span class="status-badge status-pending">
+                                            Waiting for Response
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <a href="tel:{{ booking.provider.phone_number }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-phone me-1"></i>Call Provider
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <h4>No Pending Requests</h4>
+                        <p>You don't have any pending service requests.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Active Bookings -->
+            <div class="tab-pane fade" id="active" role="tabpanel">
+                {% if active_bookings %}
+                    {% for booking in active_bookings %}
+                    <div class="card booking-card accepted">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="provider-name mb-2">
+                                        <i class="fas fa-building me-2"></i>{{ booking.provider.company_name }}
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-tools"></i>
+                                        <span>{{ booking.service_category.name }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>{{ booking.created_at|date:"F d, Y - h:i A" }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-phone"></i>
+                                        <span>Provider: {{ booking.provider.phone_number }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="mb-3">
+                                        <span class="status-badge status-{{ booking.status }}">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <a href="tel:{{ booking.provider.phone_number }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-phone me-1"></i>Call Provider
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-tasks"></i>
+                        <h4>No Active Services</h4>
+                        <p>You don't have any active service requests.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Completed Bookings -->
+            <div class="tab-pane fade" id="completed" role="tabpanel">
+                {% if completed_bookings %}
+                    {% for booking in completed_bookings %}
+                    <div class="card booking-card completed">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="provider-name mb-2">
+                                        <i class="fas fa-building me-2"></i>{{ booking.provider.company_name }}
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-tools"></i>
+                                        <span>{{ booking.service_category.name }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>{{ booking.created_at|date:"F d, Y - h:i A" }}</span>
+                                    </div>
+                                    <div class="booking-info">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span class="text-success">Service Completed</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <span class="status-badge status-completed">
+                                        <i class="fas fa-check-double me-1"></i>Completed
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>No Completed Services</h4>
+                        <p>You don't have any completed service requests yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

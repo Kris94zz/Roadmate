@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Roadside Assistance Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7e5f;
+            --secondary: #feb47b;
+            --dark-bg: #0a192f;
+            --card-bg: #112240;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --accent: #64ffda;
+            --border: rgba(100, 255, 218, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a192f 0%, #1a2f4f 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 126, 95, 0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-100px, -100px); }
+        }
+        
+        .login-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        .brand-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .brand-logo i {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .brand-logo h2 {
+            color: var(--text-light);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .brand-logo p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .form-label {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            color: var(--text-light);
+            box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.1);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+        
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--accent);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 126, 95, 0.4);
+        }
+        
+        .btn-provider {
+            background: linear-gradient(135deg, var(--accent), #4cc9f0);
+        }
+        
+        .btn-provider:hover {
+            box-shadow: 0 8px 20px rgba(100, 255, 218, 0.4);
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: none;
+            color: var(--accent);
+            border-bottom: 3px solid var(--accent);
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: var(--text-light);
+        }
+        
+        .text-primary {
+            color: var(--accent) !important;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .text-primary:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+        
+        .alert-danger {
+            background: rgba(231, 74, 59, 0.1);
+            border-left-color: #e74a3b;
+            color: #ff6b6b;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: var(--border);
+        }
+        
+        .divider::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: var(--border);
+        }
+        
+        .divider span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="brand-logo">
+                            <i class="fas fa-road"></i>
+                            <h2>RoadMate</h2>
+                            <p>Your Trusted Roadside Assistance</p>
+                        </div>
+                        
+                        <!-- Display messages -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- Tab Navigation -->
+                        <ul class="nav nav-tabs nav-fill mb-4" id="loginTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link {% if not show_provider_tab %}active{% endif %}" id="user-tab" data-bs-toggle="tab" data-bs-target="#user-login" type="button" role="tab" aria-controls="user-login" aria-selected="{% if not show_provider_tab %}true{% else %}false{% endif %}">
+                                    <i class="fas fa-user me-2"></i> User Login
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link {% if show_provider_tab %}active{% endif %}" id="provider-tab" data-bs-toggle="tab" data-bs-target="#provider-login" type="button" role="tab" aria-controls="provider-login" aria-selected="{% if show_provider_tab %}true{% else %}false{% endif %}">
+                                    <i class="fas fa-tools me-2"></i> Provider Login
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="loginTabsContent">
+                            <!-- User Login Form -->
+                            <div class="tab-pane fade {% if not show_provider_tab %}show active{% endif %}" id="user-login" role="tabpanel" aria-labelledby="user-tab">
+                                <form method="post" action="{% url 'login' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ next }}">
+                                    
+                                    <div class="mb-3">
+                                        <label for="id_username" class="form-label">Username</label>
+                                        <input type="text" name="username" class="form-control" id="id_username" required>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="id_password" class="form-label">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" name="password" autocomplete="current-password" class="form-control" required id="id_password">
+                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); color: #e6f1ff;">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <div class="text-center mt-3">
+                                    <a href="{% url 'password_reset' %}" class="text-primary">Forgot password?</a>
+                                    <span class="mx-2">|</span>
+                                    <a href="{% url 'signup' %}" class="text-primary">Create an account</a>
+                                </div>
+                            </div>
+                            
+                            <!-- Provider Login Form -->
+                            <div class="tab-pane fade {% if show_provider_tab %}show active{% endif %}" id="provider-login" role="tabpanel" aria-labelledby="provider-tab">
+                                <form method="post" action="{% url 'login' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ next }}">
+                                    <input type="hidden" name="provider_login" value="1">
+                                    
+                                    <div class="mb-3">
+                                        <label for="provider_username" class="form-label">Username</label>
+                                        <input type="text" name="username" class="form-control" id="provider_username" required>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label for="provider_password" class="form-label">Password</label>
+                                        <input type="password" name="password" class="form-control" id="provider_password" required>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary btn-provider">
+                                            <i class="fas fa-tools me-2"></i> Sign In as Provider
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <div class="text-center mt-3">
+                                    <p class="mb-2">Don't have a provider account?</p>
+                                    <a href="{% url 'provider_register' %}" class="btn btn-outline-light btn-sm">
+                                        <i class="fas fa-user-plus me-1"></i> Register as Provider
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="divider mt-4">
+                            <span>OR</span>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <a href="{% url 'home' %}" class="text-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            function setupPasswordToggle(inputId, buttonId) {
+                const toggleBtn = document.getElementById(buttonId);
+                if (!toggleBtn) return;
+                
+                toggleBtn.addEventListener('click', function() {
+                    const passwordInput = document.getElementById(inputId);
+                    const icon = this.querySelector('i');
+                    
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+
+            // Setup password toggles
+            setupPasswordToggle('id_password', 'togglePassword');
+            setupPasswordToggle('provider_password', 'toggleProviderPassword');
+
+            // Initialize Bootstrap tabs
+            var tabEls = document.querySelectorAll('button[data-bs-toggle="tab"]');
+            tabEls.forEach(function(tabEl) {
+                tabEl.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var targetId = this.getAttribute('data-bs-target');
+                    var targetPane = document.querySelector(targetId);
+                    
+                    // Hide all tab panes
+                    document.querySelectorAll('.tab-pane').forEach(function(pane) {
+                        pane.classList.remove('show', 'active');
+                    });
+                    
+                    // Deactivate all tab buttons
+                    tabEls.forEach(function(el) {
+                        el.classList.remove('active');
+                        el.setAttribute('aria-selected', 'false');
+                    });
+                    
+                    // Activate current tab
+                    this.classList.add('active');
+                    this.setAttribute('aria-selected', 'true');
+                    if (targetPane) {
+                        targetPane.classList.add('show', 'active');
+                    }
+                });
+            });
+
+            // Show provider tab if specified in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('type') === 'provider') {
+                const providerTab = document.getElementById('provider-tab');
+                if (providerTab) {
+                    providerTab.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

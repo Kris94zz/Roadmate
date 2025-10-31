@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel Service Providers - Roadside Assistance</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a192f;
+            color: #e6f1ff;
+            padding-top: 70px;
+        }
+        .navbar {
+            background: rgba(10, 25, 47, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #64ffda !important;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: #e6f1ff !important;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #64ffda !important;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+            background: #112240;
+            color: #e6f1ff;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #112240;
+            color: #64ffda;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+        }
+        .btn-warning {
+            background-color: #64ffda;
+            border: none;
+            color: #0a192f;
+            font-weight: 600;
+        }
+        .btn-warning:hover {
+            background-color: #52d1b0;
+            color: #0a192f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
+        }
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background-color: rgba(100, 255, 218, 0.1);
+            color: #64ffda;
+            font-size: 1.8rem;
+        }
+        .service-card {
+            border-left: 4px solid #ffc107;
+        }
+        .service-card .icon-box {
+            background-color: rgba(100, 255, 218, 0.1);
+            color: #64ffda;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Roadmate</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'fuel_service' %}">Fuel Service</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user and user.is_authenticated %}
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-car me-2"></i>My Bookings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light me-2">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5" style="margin-top: 80px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="h5 mb-0">Fuel Service Providers</h2>
+                            <a href="{% url 'home' %}" class="btn btn-sm btn-light">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Search and Filter Bar -->
+                        <div class="p-4 border-bottom">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search by station name or location...">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="filterSelect">
+                                        <option selected>All Stations</option>
+                                        <option>24/7 Available</option>
+                                        <option>Premium Fuel</option>
+                                        <option>Near Me</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fuel Stations List -->
+                        <div class="list-group list-group-flush" id="fuelStationsList">
+                            <!-- Sample Fuel Station 1 -->
+                            <div class="list-group-item list-group-item-action p-4">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="d-flex">
+                                        <img src="https://via.placeholder.com/80" class="rounded me-4" alt="Fuel Station" style="width: 80px; height: 80px; object-fit: cover;">
+                                        <div>
+                                            <h5 class="mb-1">City Fuel Center</h5>
+                                            <p class="text-muted mb-2">123 Main St, Anytown</p>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-success me-2">Open Now</span>
+                                                <small class="text-muted">Closes at 10:00 PM</small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-warning me-1">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="far fa-star"></i>
+                                                </span>
+                                                <small class="text-muted">(128 reviews)</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="h5 mb-3">$3.49<small class="text-muted">/gallon</small></div>
+                                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#requestModal">
+                                            <i class="fas fa-gas-pump me-1"></i> Request Fuel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sample Fuel Station 2 -->
+                            <div class="list-group-item list-group-item-action p-4">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="d-flex">
+                                        <img src="https://via.placeholder.com/80" class="rounded me-4" alt="Fuel Station" style="width: 80px; height: 80px; object-fit: cover;">
+                                        <div>
+                                            <h5 class="mb-1">Quick Stop Gas</h5>
+                                            <p class="text-muted mb-2">456 Oak Ave, Somewhere</p>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-success me-2">Open 24/7</span>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-warning me-1">
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star"></i>
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                    <i class="far fa-star"></i>
+                                                </span>
+                                                <small class="text-muted">(87 reviews)</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="h5 mb-3">$3.59<small class="text-muted">/gallon</small></div>
+                                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#requestModal">
+                                            <i class="fas fa-gas-pump me-1"></i> Request Fuel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Modal -->
+    <div class="modal fade" id="requestModal" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="requestModalLabel">Request Fuel Delivery</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="fuelType" class="form-label">Fuel Type</label>
+                            <select class="form-select" id="fuelType">
+                                <option selected>Regular Unleaded</option>
+                                <option>Premium Unleaded</option>
+                                <option>Diesel</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fuelAmount" class="form-label">Amount (gallons)</label>
+                            <input type="number" class="form-control" id="fuelAmount" min="1" max="20" value="5">
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Your Location</label>
+                            <input type="text" class="form-control" id="location" placeholder="Enter your current location">
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleInfo" class="form-label">Vehicle Information</label>
+                            <input type="text" class="form-control" id="vehicleInfo" placeholder="e.g., Blue Honda Civic">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning">
+                        <i class="fas fa-paper-plane me-1"></i> Send Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const stations = document.querySelectorAll('#fuelStationsList .list-group-item');
+                    
+                    stations.forEach(station => {
+                        const stationName = station.querySelector('h5').textContent.toLowerCase();
+                        const stationAddress = station.querySelector('.text-muted').textContent.toLowerCase();
+                        
+                        if (stationName.includes(searchTerm) || stationAddress.includes(searchTerm)) {
+                            station.style.display = '';
+                        } else {
+                            station.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Filter functionality
+            const filterSelect = document.getElementById('filterSelect');
+            if (filterSelect) {
+                filterSelect.addEventListener('change', function() {
+                    console.log('Filter by:', this.value);
+                    // Add filtering logic here
+                });
+            }
+
+            // Handle request form submission
+            const requestForm = document.querySelector('#requestModal form');
+            if (requestForm) {
+                requestForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Handle form submission
+                    alert('Your fuel request has been received! A service provider will contact you shortly.');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
+                    modal.hide();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

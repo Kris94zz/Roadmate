@@ -1,0 +1,118 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+:root {
+    --primary: #4a6cf7;
+    --primary-dark: #3a5ce4;
+    --secondary: #6c757d;
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+}
+
+/* Header */
+#header {
+    background: var(--dark);
+    color: white;
+    padding: 10px 20px;
+}
+
+#branding h1 {
+    color: white;
+    font-weight: 600;
+}
+
+/* Sidebar */
+#content-main {
+    background: #f5f7fb;
+    min-height: calc(100vh - 60px);
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background: var(--primary) !important;
+    color: white !important;
+    padding: 8px 16px !important;
+}
+
+/* Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: var(--primary);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+    background: var(--primary-dark);
+}
+
+/* Tables */
+thead th {
+    background: #f1f3f9 !important;
+    color: var(--dark) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* Forms */
+input[type=text], input[type=password], input[type=email], input[type=url], 
+input[type=number], input[type=tel], textarea, select, .vTextField {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 8px 12px;
+    box-shadow: none !important;
+}
+
+/* Dashboard */
+.dashboard #content {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dashboard .module table th {
+    width: 100%;
+}
+
+.dashboard .module table td {
+    white-space: nowrap;
+}
+
+.dashboard .module table td a {
+    display: block;
+    padding: 8px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard #content {
+        padding: 10px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'images/logo.png' %}" height="40px" style="margin-right: 10px; vertical-align: middle;"/>
+        {{ site_header|default:_('Django administration') }}
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+{% endblock %}

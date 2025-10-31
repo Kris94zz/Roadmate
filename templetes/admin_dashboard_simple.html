@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - RoadMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7e5f;
+            --secondary: #feb47b;
+            --dark-bg: #0a192f;
+            --card-bg: #112240;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --accent: #64ffda;
+            --border: rgba(100, 255, 218, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f 0%, #1a2f4f 100%);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .dashboard-header h1 {
+            color: white;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(255, 126, 95, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .stat-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+        }
+        
+        .stat-card i {
+            color: var(--accent);
+            opacity: 0.3;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, rgba(255, 126, 95, 0.1), rgba(100, 255, 218, 0.1));
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem;
+        }
+        
+        .card-header h5 {
+            color: var(--accent);
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        .table {
+            color: var(--text-light);
+        }
+        
+        .table thead th {
+            border-bottom: 2px solid var(--border);
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: rgba(100, 255, 218, 0.05);
+        }
+        
+        .badge {
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .bg-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        }
+        
+        .bg-success {
+            background: linear-gradient(135deg, #1cc88a, #06d6a0) !important;
+        }
+        
+        .bg-warning {
+            background: linear-gradient(135deg, #f6c23e, #f4a261) !important;
+            color: #000 !important;
+        }
+        
+        .bg-info {
+            background: linear-gradient(135deg, #36b9cc, #4cc9f0) !important;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #1cc88a, #06d6a0);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(28, 200, 138, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74a3b, #dc3545);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 74, 59, 0.4);
+        }
+        
+        .btn-outline-danger {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            font-weight: 600;
+        }
+        
+        .btn-outline-danger:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        .text-primary {
+            color: var(--accent) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-tachometer-alt me-3"></i>Admin Dashboard</h1>
+                    <p class="text-white-50 mb-0">Manage your RoadMate platform</p>
+                </div>
+                <div>
+                    <a href="{% url 'home' %}" class="btn btn-outline-danger me-2">
+                        <i class="fas fa-home me-2"></i>Home
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-label">Total Users</div>
+                                <div class="stat-value">{{ stats.total_users|default:'0' }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-label">Active Providers</div>
+                                <div class="stat-value">{{ stats.active_providers|default:'0' }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-check-circle fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-label">Pending Requests</div>
+                                <div class="stat-value">{{ stats.pending_providers|default:'0' }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clock fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="stat-label">Total Requests</div>
+                                <div class="stat-value">{{ stats.total_requests|default:'0' }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-list fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Provider Requests -->
+        {% if pending_providers %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-user-clock me-2"></i>Pending Provider Requests</h5>
+            </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Services</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for provider in pending_providers %}
+                                <tr>
+                                    <td><strong>{{ provider.company_name }}</strong></td>
+                                    <td>{{ provider.user.username }}</td>
+                                    <td>{{ provider.user.email }}</td>
+                                    <td>{{ provider.phone_number }}</td>
+                                    <td>
+                                        {% for category in provider.service_categories.all %}
+                                            <span class="badge bg-primary">{{ category.name }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ provider.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="provider_id" value="{{ provider.id }}">
+                                            <button type="submit" name="approve_provider" class="btn btn-sm btn-success" onclick="return confirm('Approve this provider?')">
+                                                <i class="fas fa-check"></i> Approve
+                                            </button>
+                                            <button type="submit" name="reject_provider" class="btn btn-sm btn-danger" onclick="return confirm('Reject and delete this provider request?')">
+                                                <i class="fas fa-times"></i> Reject
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- All Approved Providers -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-building me-2"></i>All Approved Providers</h5>
+            </div>
+            <div class="card-body">
+                {% if all_providers %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Contact</th>
+                                    <th>Services</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for provider in all_providers %}
+                                <tr>
+                                    <td><strong>{{ provider.company_name }}</strong></td>
+                                    <td>
+                                        {{ provider.phone_number }}<br>
+                                        <small class="text-muted">{{ provider.user.email }}</small>
+                                    </td>
+                                    <td>
+                                        {% for category in provider.service_categories.all %}
+                                            <span class="badge bg-primary">{{ category.name }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% if provider.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ provider.created_at|date:"M d, Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-4">No approved providers yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Service Requests -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-clipboard-list me-2"></i>Recent Service Requests</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_requests %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Provider</th>
+                                    <th>Service</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in recent_requests %}
+                                <tr>
+                                    <td>{{ request.customer_name }}</td>
+                                    <td>{{ request.provider.company_name }}</td>
+                                    <td><span class="badge bg-info">{{ request.service_category.name }}</span></td>
+                                    <td>
+                                        {% if request.status == 'pending' %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% elif request.status == 'accepted' %}
+                                            <span class="badge bg-success">Accepted</span>
+                                        {% elif request.status == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ request.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ request.created_at|date:"M d, h:i A" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-4">No service requests yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - RoadMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7e5f;
+            --secondary: #feb47b;
+            --dark-bg: #0a192f;
+            --card-bg: #112240;
+            --text-light: #e6f1ff;
+            --text-muted: #8892b0;
+            --accent: #64ffda;
+            --border: rgba(100, 255, 218, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a192f 0%, #1a2f4f 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(100, 255, 218, 0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(100px, 100px); }
+        }
+        
+        .signup-container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        .brand-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .brand-logo i {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .brand-logo h2 {
+            color: var(--text-light);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .brand-logo p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .form-label {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            color: var(--text-light);
+            box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.1);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 126, 95, 0.4);
+        }
+        
+        .text-primary {
+            color: var(--accent) !important;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .text-primary:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .form-text {
+            color: #8892b0 !important;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .password-requirements {
+            font-size: 0.875rem;
+            color: #8892b0;
+            margin-top: 0.5rem;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+        .requirement i {
+            margin-right: 0.5rem;
+            font-size: 0.75rem;
+        }
+        .requirement.valid {
+            color: #64ffda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container signup-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="brand-logo">
+                            <i class="fas fa-road"></i>
+                            <h2>Join RoadMate</h2>
+                            <p>Create your account to get started</p>
+                        </div>
+                        
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form method="post" id="signupForm">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="id_username" name="username" 
+                                       value="{{ form.username.value|default:'' }}" required>
+                                <div class="form-text">
+                                    {{ form.username.help_text }}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="id_password1" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="id_password1" name="password1" required>
+                                <div class="password-requirements mt-2">
+                                    <div class="requirement" id="length">
+                                        <i class="fas fa-circle"></i> At least 8 characters
+                                    </div>
+                                    <div class="requirement" id="number">
+                                        <i class="fas fa-circle"></i> At least one number
+                                    </div>
+                                    <div class="requirement" id="special">
+                                        <i class="fas fa-circle"></i> At least one special character
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="id_password2" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="id_password2" name="password2" required>
+                                <div class="invalid-feedback" id="passwordError">
+                                    Passwords must match.
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+                            </div>
+                        </form>
+                        
+                        <div class="text-center mt-4">
+                            <p class="mb-0">Already have an account? <a href="{% url 'login' %}" class="text-primary">Sign in</a></p>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{% url 'home' %}" class="text-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password validation
+        const password1 = document.getElementById('id_password1');
+        const password2 = document.getElementById('id_password2');
+        const form = document.getElementById('signupForm');
+        
+        // Check password requirements
+        function checkPassword() {
+            const password = password1.value;
+            const requirements = {
+                length: password.length >= 8,
+                number: /[0-9]/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+            
+            // Update requirement indicators
+            Object.keys(requirements).forEach(key => {
+                const element = document.getElementById(key);
+                const icon = element.querySelector('i');
+                if (requirements[key]) {
+                    element.classList.add('valid');
+                    icon.className = 'fas fa-check-circle';
+                } else {
+                    element.classList.remove('valid');
+                    icon.className = 'fas fa-circle';
+                }
+            });
+            
+            return requirements.length && requirements.number && requirements.special;
+        }
+        
+        // Check if passwords match
+        function checkPasswordsMatch() {
+            if (password1.value !== password2.value) {
+                password2.setCustomValidity("Passwords don't match");
+                password2.classList.add('is-invalid');
+                return false;
+            } else {
+                password2.setCustomValidity('');
+                password2.classList.remove('is-invalid');
+                return true;
+            }
+        }
+        
+        // Event listeners
+        password1.addEventListener('input', checkPassword);
+        password2.addEventListener('input', checkPasswordsMatch);
+        
+        // Form submission
+        form.addEventListener('submit', function(event) {
+            if (!checkPassword() || !checkPasswordsMatch()) {
+                event.preventDefault();
+            }
+        });
+    </script>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
